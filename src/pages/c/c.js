@@ -8,7 +8,7 @@ class C extends Component {
                 <div>
                     c
                 </div>
-                <img src={require('../../assets/close.png')} alt="123" />
+                <img src={require('../../assets/1.png')} alt="123" />
             </div>
         );
     }

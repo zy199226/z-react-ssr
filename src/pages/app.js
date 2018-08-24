@@ -18,7 +18,7 @@ class App extends Component {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/ccc">
+                        <Link to="/c/ccc">
                             ccc
                         </Link>
                     </li>

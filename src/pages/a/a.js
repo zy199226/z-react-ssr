@@ -5,7 +5,7 @@ class A extends Component {
     render() {
         return (
             <div>
-                <div>a</div>
+                <div>d</div>
             </div>
         );
     }

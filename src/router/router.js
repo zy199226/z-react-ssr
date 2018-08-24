@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { HashRouter as Router, Route } from 'react-router-dom';
 import { hot } from 'react-hot-loader';
-
-import lazyLoad from './lazyLoad';
+import importedComponent from 'react-imported-component';
 
 import App from '../pages/app';
 
-const A = lazyLoad(() => import('../pages/a/a'));
-const B = lazyLoad(() => import('../pages/b/b'));
-const C = lazyLoad(() => import('../pages/c/c'));
+const A = importedComponent(() => import('../pages/a/a'));
+const B = importedComponent(() => import('../pages/b/b'));
+const C = importedComponent(() => import('../pages/c/c'));
 
 class Root extends Component {
     render() {
@@ -18,7 +17,7 @@ class Root extends Component {
                     <Route path="/" component={App} />
                     <Route path="/aaa" component={A} />
                     <Route path="/bbb" component={B} />
-                    <Route path="/ccc" component={C} />
+                    <Route path="/c/ccc" component={C} />
                 </div>
             </Router>
         );
