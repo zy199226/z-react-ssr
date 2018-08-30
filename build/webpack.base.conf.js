@@ -61,6 +61,12 @@ module.exports = {
         }
     },
 
+    stats: {
+        children: false,
+        modules: false,
+        warnings: false
+    },
+
     plugins: [
         new MiniCssExtractPlugin({
             filename: devMode ? 'css/[name].css' : 'css/[name].[hash:8].css',
