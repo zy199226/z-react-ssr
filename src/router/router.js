@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { HashRouter as Router, Route } from 'react-router-dom';
 import { hot } from 'react-hot-loader';
-import importedComponent from 'react-imported-component';
+import loadable from 'loadable-components';
 
 import App from '../pages/app';
 
-const A = importedComponent(() => import('../pages/a/a'));
-const B = importedComponent(() => import('../pages/b/b'));
-const C = importedComponent(() => import('../pages/c/c'));
+const A = loadable(() => import('../pages/a/a'));
+const B = loadable(() => import('../pages/b/b'));
+const C = loadable(() => import('../pages/c/c'));
 
 class Root extends Component {
     render() {
