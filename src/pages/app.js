@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import 'normalize.css';
 import './app.sass';
 
 class App extends Component {

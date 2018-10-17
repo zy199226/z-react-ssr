@@ -55,7 +55,7 @@ module.exports = merge(baseWebpackConfig, {
 
     plugins: [
         new CleanWebpackPlugin(
-            ['dist/'],
+            ['dist/static/'],
             {
                 root: path.join(__dirname, '../'),
                 verbose: true,
@@ -65,10 +65,7 @@ module.exports = merge(baseWebpackConfig, {
         new HtmlWebpackPlugin({
             filename: path.join(__dirname, '../dist/index.html'),
             template: path.join(__dirname, '../src/index.html'),
-            inject: true,
-            minify: {
-                removeAttributeQuotes: true
-            }
+            inject: true
         })
     ]
 });

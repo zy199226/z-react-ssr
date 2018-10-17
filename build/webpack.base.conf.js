@@ -5,8 +5,9 @@ const HappyPack = require('happypack');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const chalk = require('chalk');
 
-const devMode = !/production/.test(process.env.npm_lifecycle_script);
+const devMode = /development/.test(process.env.npm_lifecycle_script);
 const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
+const staticPath = devMode ? '' : 'static/';
 
 module.exports = {
     entry: {
@@ -14,19 +15,21 @@ module.exports = {
     },
 
     output: {
-        path: path.resolve(__dirname, '../dist/static'),
+        path: path.resolve(__dirname, '../dist/', staticPath),
         filename: 'js/[name].[hash:8].js',
         chunkFilename: 'js/[name].[hash:8].js',
-        publicPath: './static/'
+        publicPath: `/${staticPath}`
     },
 
     module: {
         rules: [
             {
                 test: /.(js|jsx)$/,
-                use: {
-                    loader: 'happypack/loader?id=happyBabel'
-                },
+                use: [
+                    {
+                        loader: 'happypack/loader?id=happyBabel'
+                    }
+                ],
                 exclude: [
                     path.join(__dirname, '../node_modules')
                 ]
@@ -42,24 +45,28 @@ module.exports = {
             },
             {
                 test: /\.(png|jpeg|jpg|gif)$/,
-                use: {
-                    loader: 'url-loader',
-                    options: {
-                        limit: 5 * 1024,
-                        outputPath: 'images',
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 5 * 1024,
+                            outputPath: 'images',
+                        }
                     }
-                }
+                ]
             },
             {
                 test: /\.(svg|bmp|eot|woff|woff2|ttf)$/,
-                use: {
-                    loader: 'url-loader',
-                    options: {
-                        limit: 5 * 1024,
-                        outputPath: 'fonts',
-                        publicPath: '../static/fonts/'
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 5 * 1024,
+                            outputPath: 'fonts',
+                            publicPath: `../${staticPath}fonts/`
+                        }
                     }
-                }
+                ]
             }
         ]
     },
