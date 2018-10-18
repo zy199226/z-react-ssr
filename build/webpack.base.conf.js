@@ -5,9 +5,9 @@ const HappyPack = require('happypack');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const chalk = require('chalk');
 
-const devMode = /development/.test(process.env.npm_lifecycle_script);
+const devMode = process.env.NODE_ENV === 'production';
 const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
-const staticPath = devMode ? '' : 'static/';
+const staticPath = devMode ? 'static/' : '';
 
 module.exports = {
     entry: {
@@ -37,7 +37,7 @@ module.exports = {
             {
                 test: /\.(sa|sc|c)ss$/,
                 use: [
-                    devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+                    devMode ? MiniCssExtractPlugin.loader : 'style-loader',
                     'css-loader',
                     'postcss-loader',
                     'sass-loader'
@@ -86,8 +86,8 @@ module.exports = {
 
     plugins: [
         new MiniCssExtractPlugin({
-            filename: devMode ? 'css/[name].css' : 'css/[name].[hash:8].css',
-            chunkFilename: devMode ? 'css/[id].css' : 'css/[id].[hash:8].css'
+            filename: devMode ? 'css/[name].[hash:8].css' : 'css/[name].css',
+            chunkFilename: devMode ? 'css/[id].[hash:8].css' : 'css/[id].css'
         }),
         new HappyPack({
             id: 'happyBabel',

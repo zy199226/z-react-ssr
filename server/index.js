@@ -55,7 +55,7 @@ export default () => {
     });
 
     app.get('*', (req, res) => {
-        console.log(`--> ${req.url}`);
+        const start = Date.now();
         const context = {};
         const content = (
             <StaticRouter location={req.url} context={context}>
@@ -67,6 +67,7 @@ export default () => {
             const main = renderToString(content);
             const html = body.replace('<div id="app"></div>', `<div id="app">${main}</div>${loadableState.getScriptTag()}`);
             res.status(200).send(html);
+            console.log(`--> ${req.url}  ${Date.now() - start}ms`);
         }).catch((err) => {
             console.log(err);
         });

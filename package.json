@@ -1,31 +1,33 @@
 {
-  "name": "react-cli",
+  "name": "react-ssr",
   "version": "1.0.0",
-  "description": "react",
+  "description": "react server side render",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --mode production --config build/webpack.prod.conf.js",
+    "build": "NODE_ENV=production webpack --mode production --config build/webpack.prod.conf.js",
     "dev": "webpack-dev-server --mode development --config build/webpack.dev.conf.js",
     "start": "npm run dev",
-    "ssr": "nodemon ./build/start-server",
     "prod": "npm-run-all prod-server prod-client prod-start",
-    "prod-client": "webpack --mode production --config ./build/webpack.prod.client.conf.js --colors --display-error-details",
-    "prod-server": "webpack --mode production --config ./build/webpack.prod.server.conf.js --colors --display-error-details",
-    "prod-start": "node ./build/start-server"
+    "prod-client": "NODE_ENV=production webpack --mode production --config ./build/webpack.prod.client.conf.js --colors --display-error-details",
+    "prod-server": "NODE_ENV=production webpack --mode production --config ./build/webpack.prod.server.conf.js --colors --display-error-details",
+    "prod-start": "NODE_ENV=production node ./build/start-server"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zy199226/z-react-cli.git"
+    "url": "git+https://github.com/zy199226/z-react-ssr.git"
   },
   "keywords": [
-    "react"
+    "react",
+    "react ssr",
+    "react server side",
+    "ssr"
   ],
   "author": "zy",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/zy199226/z-react-cli/issues"
+    "url": "https://github.com/zy199226/z-react-ssr/issues"
   },
-  "homepage": "https://github.com/zy199226/z-react-cli#readme",
+  "homepage": "https://github.com/zy199226/z-react-ssr#readme",
   "devDependencies": {
     "autoprefixer": "^8.6.4",
     "babel-core": "^6.26.3",
