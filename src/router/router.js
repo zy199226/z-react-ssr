@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { hot } from 'react-hot-loader';
-import loadable from 'loadable-components';
+import importedComponent from 'react-imported-component';
 
+import App from '../pages/app';
+
+const A = importedComponent(() => import('../pages/a/a'));
+const B = importedComponent(() => import('../pages/b/b'));
+const C = importedComponent(() => import('../pages/c/c'));
 const App = loadable(() => import('../pages/app'));
 const A = loadable(() => import('../pages/a/a'));
 const B = loadable(() => import('../pages/b/b'));
