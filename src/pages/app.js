@@ -1,9 +1,18 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Switch, Link, Route } from 'react-router-dom';
+// import { action } from 'mobx';
+// import { inject, observer } from 'mobx-react';
 import 'normalize.css';
+
+import list2 from '../router/routes2';
 import './app.sass';
 
+// @inject('a') @observer
 class App extends Component {
+    // @action static asyncData = store => Promise.all([
+    //     store.a.plus()
+    // ])
+
     render() {
         return (
             <div>
@@ -19,11 +28,14 @@ class App extends Component {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/c/ccc">
+                        <Link to="/ccc">
                             ccc
                         </Link>
                     </li>
                 </ul>
+                <Switch>
+                    {list2.map(v => (<Route key={v.path} {...v} />))}
+                </Switch>
             </div>
         );
     }
