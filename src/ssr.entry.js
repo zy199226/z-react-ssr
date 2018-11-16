@@ -5,15 +5,26 @@ import { Provider } from 'mobx-react';
 import { loadComponents } from 'loadable-components';
 import stores from './store';
 import Router from './router';
-import mergeOb from './util/mergeObservables';
 
-window.Promise = Promise;
+// window.Promise = Promise; // 在 transform-runtime 对引入的组件（例如 antd）无效时，可对全局对象赋值来生效
+
+const mergeObservables = (stores, source) => {
+    if (!source) {
+        return stores;
+    }
+    for (const v in source) {
+        if (Object.prototype.hasOwnProperty.call(source, v)) {
+            Object.assign(stores[v], source[v]);
+        }
+    }
+    return stores;
+};
 
 configure({
     enforceActions: 'observed'
 });
 
-mergeOb(stores, window.__INITIAL_STATE__);
+mergeObservables(stores, window.__INITIAL_STATE__);
 
 loadComponents().then(() => {
     render(
