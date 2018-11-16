@@ -12,7 +12,7 @@ app.use('/static', express.static(path.join(__dirname, '../dist/static')));
 app.get('/favicon.ico', resFavicon);
 
 /**
- * 测试用接口，不需要可直接删除
+ * 测试用接口，可直接删除
  */
 app.get('/api/content', (req, res) => {
     console.log(req.url);
