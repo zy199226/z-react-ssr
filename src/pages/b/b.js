@@ -6,7 +6,7 @@ import './b.sass';
 @inject('b') @observer
 class B extends Component {
     @action static asyncData = store => Promise.all([
-        store.b.req()
+        // store.b.req()
     ])
 
     componentDidMount() {
