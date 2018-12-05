@@ -1,22 +1,12 @@
 const webpack = require('webpack');
 const path = require('path');
 const merge = require('webpack-merge');
-const os = require('os');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const portfinder = require('portfinder');
 const baseWebpackConfig = require('./webpack.base.conf');
 
-let ip = 'localhost';
-const filterIP = (i) => {
-    const v = i.findIndex(a => a.family === 'IPv4');
-    return i[v].address;
-};
-if (os.networkInterfaces().en4) {
-    ip = filterIP(os.networkInterfaces().en4);
-} else if (os.networkInterfaces().en0) {
-    ip = filterIP(os.networkInterfaces().en0);
-}
+const ip = '0.0.0.0';
 
 const devWebpackConfig = merge(baseWebpackConfig, {
     devServer: {
@@ -31,14 +21,13 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         clientLogLevel: 'warning',
         quiet: true,
         historyApiFallback: true,
-        // proxy: {
-        //     '/testfoodie': {
-        //         // target: 'https://xcx.thehour.cn',
-        //         target: 'http://foodie.dev.php',
-        //         pathRewrite: { '^/testfoodie': '' },
-        //         changeOrigin: true
-        //     }
-        // }
+        proxy: {
+            '/api': {
+                target: 'http://10.100.4.63:3000',
+                // pathRewrite: { '^/api': '' },
+                changeOrigin: true
+            }
+        }
     },
 
     plugins: [

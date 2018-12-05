@@ -14,6 +14,12 @@ class A extends Component {
         this.store = props.a;
     }
 
+    componentDidMount() {
+        if (!this.store.num) {
+            A.asyncData(this.props);
+        }
+    }
+
     render() {
         const { num, minus, plus } = this.store;
 
