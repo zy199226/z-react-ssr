@@ -66,6 +66,7 @@
 这个是 webpack 的基础配置文件，被其他配置文件所依赖，有下列几个可配置部分：
 
 1、输出静态文件路径
+
 ```javascript
 // 静态文件路径，在 dev-server 模式中为空，不然会报文件路径错误
 // 被下面 output 配置所依赖，决定了生产环境下静态文件的路径
@@ -73,6 +74,7 @@ const staticPath = devMode ? 'static/' : '';
 ```
 
 2、输出文件路径
+
 ```javascript
 output: {
     path: path.resolve(__dirname, '../dist/', staticPath), // 这里设置输出文件路径
@@ -83,7 +85,9 @@ output: {
 ```
 
 3、loader 相关
+
 这里放置的都是loader相关的配置，使用了 'sass'、'postcss' 等，如需其他配置，请自行添加，可参考[loader](https://webpack.docschina.org/concepts/loaders/#%E7%A4%BA%E4%BE%8B)。
+
 ```javascript
 module: {
     rules: [
@@ -137,7 +141,9 @@ module: {
 ```
 
 4、resolve
+
 这些选项能设置模块如何被解析，自行设置请参考[模块解析](https://webpack.docschina.org/configuration/resolve/#src/components/Sidebar/Sidebar.jsx)。
+
 ```javascript
 resolve: {
     extensions: ['.js', '.jsx', '.json'],
@@ -148,7 +154,9 @@ resolve: {
 ```
 
 5、统计信息
+
 因为打包后的输出统计信息太多了，所以我把一些信息给关掉了，自行设置请参考[统计信息](https://webpack.docschina.org/configuration/stats/#stats)。
+
 ```javascript
 stats: {
     children: false,
@@ -158,9 +166,13 @@ stats: {
 ```
 
 6、插件
+
 提取 css 等样式文件：[MiniCssExtractPlugin](https://webpack.js.org/plugins/mini-css-extract-plugin/)
+
 多核心打包，提升打包速度的，小项目提升不明显：[HappyPack](https://github.com/amireh/happypack)
+
 没什么用，显示打包进度条：[ProgressBarPlugin](https://www.npmjs.com/package/progress-bar-webpack-plugin)
+
 ```javascript
 plugins: [
     new MiniCssExtractPlugin({
@@ -184,7 +196,9 @@ plugins: [
 
 #### /build/webpack.dev.conf.js
 1、devServer
+
 webpack-dev-server 配置，参考[devServer](https://webpack.docschina.org/configuration/dev-server/)。
+
 ```javascript
 devServer: {
     contentBase: path.join(__dirname, '../dist'), // 告诉服务器从哪个目录中提供内容
@@ -209,9 +223,13 @@ devServer: {
 ```
 
 2、插件
+
 webpack内置的热替换模块，无需设置，可作了解：[HotModuleReplacementPlugin](https://webpack.docschina.org/plugins/hot-module-replacement-plugin/#src/components/Sidebar/Sidebar.jsx)
+
 启用HotModuleReplacementPlugin时，此插件将显示模块的相对路径。无需设置，建议用于开发：[NamedModulesPlugin](https://webpack.docschina.org/plugins/named-modules-plugin/#src/components/Sidebar/Sidebar.jsx)
+
 生成html用的：[HtmlWebpackPlugin](https://github.com/jantimon/html-webpack-plugin#options)
+
 ```javascript
 plugins: [
     new webpack.HotModuleReplacementPlugin(),
@@ -227,8 +245,10 @@ plugins: [
 
 #### /build/webpack.prod.conf.js
 1、optimization（优化）
+
 splitChunks 用来分割模块打包，根据 splitChunks.cacheGroups 下的对象里面的条件进行分割的，具体的分割条件可查看[一步一步的了解webpack4的splitChunk插件](https://juejin.im/post/5af1677c6fb9a07ab508dabb)这篇文章，写得比较详细。
 minimizer 在 production 模式下对代码进行压缩，因为某些原因，这里我从新引入两个更高效率的压缩插件。
+
 ```javascript
 optimization: {
     runtimeChunk: {
@@ -299,7 +319,9 @@ plugins: [
 
 #### /package.json
 这个文件里面有一个对象是可以设置的，针对的是 postcss 下的 autoprefixer 自动补全 css 前缀插件，因为有了这个插件，所以我们可以自动的去适应大部分的浏览器。下面的这个设置项的意思是「使用量大于1%，浏览器的最后两个版本，不小于ie8」，所以最后打包出来的项目会自动补全 css 前缀到适应这个范围内。
+
 当然这个插件并不是万无一失的，还是会有一些版本的浏览器的某些 css，是无法补全前缀来实现功能的，在开发中要多加注意像 ie 这种异类，然后在一些手机端项目上，主流浏览器上，都可以放心的去开发。
+
 你可以在这里面加上我们常用的配置，例如："iOS >= 8",, "Android > 4.4", "Firefox >= 20" 等，我们在开发中需要特别针对的浏览器版本，查看[Browserslist](https://github.com/browserslist/browserslist#best-practices)了解更多配置列表。
 
 ```json
@@ -312,12 +334,15 @@ plugins: [
 
 # 服务端渲染
 关于「服务端渲染」如果你不是很了解的，可以 google 了解一下。如果你不需要用这个功能，可以完全忽略下面的内容，只看看上面的，直接拿来用就行了。一句话判断是否需要 "这个项目需要 SEO 吗？需要首屏加载速度快吗？"，如果都不需要，就老老实实的用「客户端渲染」就好了。
+
 「服务端渲染」是我在上面的脚手架完成后才加入的，所以在结构上来说，「服务端渲染」完全依赖「客户端渲染」的配置，把「服务端渲染」相关的内容全部删掉，也不会影响到脚手架的基本功能。
 
 ### 写法差异
 因为在服务端运行代码的时候，react 的生命周期只进行到 componentWillMount，之后的从 componentDidMount 开始在浏览器开始运行，因为「服务端渲染」是需要在页面请求的时候把完整的页面传回去，包括你向后端请求的数据，所以我们需要在服务端把数据请求好，和页面一起传回去。
+
 所以因为这一点，造成了我们在页面加载时请求的数据，需要用其他方法来处理，我们需要在服务端运行的时候捕获需要完成的任务，在这里我们定义了一个 'asyncData' 的异步方法（在任务完成后进行下一步的操作），这样的就可以在服务端接收到请求时，主动去把当前请求页面的 'asyncData' 方法捕获出来并完成这个任务，然后再统一返回数据。
 同时我们需要一个状态管理工具，这里我用的是 'Mobx'，
+
 ```javascript
 // /src/pages/a
 @inject('a') @observer
