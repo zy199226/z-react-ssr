@@ -42,7 +42,7 @@
     ├── router                  // 路由
     ├── store                   // 状态管理
     ├── util                    // 工具类文件
-    ├── index.html              // 需要提前写入的html配置，都可以写在这里面，所有生成的新html文件都以这个为基础
+    ├── index.html              // 需要提前写入的html配置，都可以写在这里面，所有生成的新html文件都以这个为基础
     ├── index.js                // 项目入口
     └── ssr.entry.js            // 「ssr」项目入口
 ```
@@ -60,10 +60,12 @@
 当然你也可以参考有人气的 UI 框架(例如 antd、element)，结合自己的使用感受，学习他们是如何做组件的，能在一大堆产品的脱颖而出，说明在使用上存在明显的优势，我有时候也会模仿他们的组件来开发。
 
 ### 可配置项
-/build/webpack.base.conf.js
+这一块写的是这个脚手架所有的可配置项（不包括服务端渲染部分，这部分下面另写），还有一些没写出来的，无关紧要的，自己搜索一下关键字也能了解如何配置。
+
+#### /build/webpack.base.conf.js
 这个是 webpack 的基础配置文件，被其他配置文件所依赖，有下列几个可配置部分：
 
-1、输出文件路径
+1、输出静态文件路径
 ```javascript
 // 静态文件路径，在 dev-server 模式中为空，不然会报文件路径错误
 // 被下面 output 配置所依赖，决定了生产环境下静态文件的路径
@@ -85,11 +87,269 @@ output: {
 ```javascript
 module: {
     rules: [
-        ...
+        {
+            test: /.(js|jsx)$/,
+            use: [
+                {
+                    loader: 'happypack/loader?id=happyBabel'
+                }
+            ],
+            exclude: [
+                path.join(__dirname, '../node_modules')
+            ]
+        },
+        {
+            test: /\.(sa|sc|c)ss$/,
+            use: [
+                devMode ? MiniCssExtractPlugin.loader : 'style-loader',
+                'css-loader',
+                'postcss-loader',
+                'sass-loader'
+            ]
+        },
+        {
+            test: /\.(png|jpeg|jpg|gif)$/,
+            use: [
+                {
+                    loader: 'url-loader',
+                    options: {
+                        limit: 5 * 1024, // 小于 5k 的转成 base64 格式，大于的生成图片放到 image 中
+                        outputPath: 'images',
+                    }
+                }
+            ]
+        },
+        {
+            test: /\.(svg|bmp|eot|woff|woff2|ttf)$/,
+            use: [
+                {
+                    loader: 'url-loader',
+                    options: {
+                        limit: 5 * 1024,
+                        outputPath: 'fonts',
+                        publicPath: '../fonts/' // 因为引入位置在 css 中，所以单独设置相对路径
+                    }
+                }
+            ]
+        }
     ]
 },
 ```
 
+4、resolve
+这些选项能设置模块如何被解析，自行设置请参考[模块解析](https://webpack.docschina.org/configuration/resolve/#src/components/Sidebar/Sidebar.jsx)。
+```javascript
+resolve: {
+    extensions: ['.js', '.jsx', '.json'],
+    alias: {
+        '@': path.join(__dirname, '..', 'src')
+    }
+},
+```
+
+5、统计信息
+因为打包后的输出统计信息太多了，所以我把一些信息给关掉了，自行设置请参考[统计信息](https://webpack.docschina.org/configuration/stats/#stats)。
+```javascript
+stats: {
+    children: false,
+    modules: false,
+    warnings: false
+},
+```
+
+6、插件
+提取 css 等样式文件：[MiniCssExtractPlugin](https://webpack.js.org/plugins/mini-css-extract-plugin/)
+多核心打包，提升打包速度的，小项目提升不明显：[HappyPack](https://github.com/amireh/happypack)
+没什么用，显示打包进度条：[ProgressBarPlugin](https://www.npmjs.com/package/progress-bar-webpack-plugin)
+```javascript
+plugins: [
+    new MiniCssExtractPlugin({
+        filename: devMode ? 'css/[name].[hash:8].css' : 'css/[name].css',
+        chunkFilename: devMode ? 'css/[id].[hash:8].css' : 'css/[id].css'
+    }),
+    new HappyPack({
+        id: 'happyBabel',
+        loaders: [{
+            loader: 'babel-loader?cacheDirectory=true'
+        }],
+        threadPool: happyThreadPool,
+        verbose: true
+    }),
+    new ProgressBarPlugin({
+        format: `build [:bar] ${chalk.green.bold(':percent')} (:elapsed seconds)`,
+        clear: false
+    })
+]
+```
+
+#### /build/webpack.dev.conf.js
+1、devServer
+webpack-dev-server 配置，参考[devServer](https://webpack.docschina.org/configuration/dev-server/)。
+```javascript
+devServer: {
+    contentBase: path.join(__dirname, '../dist'), // 告诉服务器从哪个目录中提供内容
+    publicPath: '/',
+    compress: true, // 服务是否启用 gzip 压缩
+    host: ip,
+    port: 9090,
+    hot: true, // 启用 webpack 的模块热替换特性
+    inline: true, // 启用内联模式
+    open: true, // 自动打开浏览器
+    clientLogLevel: 'warning', // 使用内联模式时，会在开发工具(DevTools)的控制台(console)显示消息
+    quiet: true, // 除了初始启动信息之外的任何内容都不会被打印到控制台
+    historyApiFallback: true,
+    proxy: { // 本地代理
+        '/api': {
+            target: 'http://10.100.4.63:3000',
+            // pathRewrite: { '^/api': '' },
+            changeOrigin: true
+        }
+    }
+},
+```
+
+2、插件
+webpack内置的热替换模块，无需设置，可作了解：[HotModuleReplacementPlugin](https://webpack.docschina.org/plugins/hot-module-replacement-plugin/#src/components/Sidebar/Sidebar.jsx)
+启用HotModuleReplacementPlugin时，此插件将显示模块的相对路径。无需设置，建议用于开发：[NamedModulesPlugin](https://webpack.docschina.org/plugins/named-modules-plugin/#src/components/Sidebar/Sidebar.jsx)
+生成html用的：[HtmlWebpackPlugin](https://github.com/jantimon/html-webpack-plugin#options)
+```javascript
+plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NamedModulesPlugin(),
+    new HtmlWebpackPlugin({
+        filename: 'index.html',
+        template: path.join(__dirname, '../src/index.html'),
+        inject: true,
+        hash: true,
+    }),
+]
+```
+
+#### /build/webpack.prod.conf.js
+1、optimization（优化）
+splitChunks 用来分割模块打包，根据 splitChunks.cacheGroups 下的对象里面的条件进行分割的，具体的分割条件可查看[一步一步的了解webpack4的splitChunk插件](https://juejin.im/post/5af1677c6fb9a07ab508dabb)这篇文章，写得比较详细。
+minimizer 在 production 模式下对代码进行压缩，因为某些原因，这里我从新引入两个更高效率的压缩插件。
+```javascript
+optimization: {
+    runtimeChunk: {
+        name: 'manifest'
+    },
+    splitChunks: {
+        cacheGroups: {
+            commons: {
+                chunks: 'initial', // initial、async和all(默认是async)
+                minChunks: 2, // 超过引用次数的会被分割（默认是1）
+                maxInitialRequests: 5, // 最大初始化请求书，默认3
+                minSize: 0 // 形成一个新代码块最小的体积(默认是30000)
+            },
+            // vendor: {
+            //     test: /[\\/]node_modules[\\/]/, // 用于控制哪些模块被这个缓存组匹配到。原封不动传递出去的话，它默认会选择所有的模块。可以传递的值类型：RegExp、String和Function
+            //     chunks: 'all',
+            //     name: 'vendor', // 打包的chunks的名字(字符串或者函数，函数可以根据条件自定义名字)
+            //     priority: -20, // 缓存组打包的先后优先级
+            //     enforce: true
+            // },
+            styles: {
+                name: 'styles',
+                test: /\.css$/,
+                chunks: 'all',
+                enforce: true
+            }
+        }
+    },
+    minimizer: [
+        new OptimizeCSSAssetsPlugin({}),
+        new WebpackParallelUglifyPlugin({
+            uglifyJS: {
+                output: {
+                    beautify: false, // 不需要格式化
+                    comments: false // 不保留注释
+                },
+                compress: {
+                    warnings: false, // 在UglifyJs删除没有用到的代码时不输出警告
+                    drop_console: true, // 删除所有的 `console` 语句，可以兼容ie浏览器
+                    collapse_vars: true, // 内嵌定义了但是只用到一次的变量
+                    reduce_vars: true // 提取出出现多次但是没有定义成变量去引用的静态值
+                }
+            }
+        })
+    ]
+},
+```
+
+2、插件
+这俩插件比较常见，可自行搜索查看详细信息。
+```javascript
+plugins: [
+    new CleanWebpackPlugin(
+        ['dist/'],
+        {
+            root: path.join(__dirname, '../'),
+            verbose: true,
+            dry: false
+        }
+    ),
+    new HtmlWebpackPlugin({
+        filename: path.join(__dirname, '../dist/index.html'),
+        template: path.join(__dirname, '../src/index.html'),
+        inject: true
+    })
+]
+```
+
+#### /package.json
+这个文件里面有一个对象是可以设置的，针对的是 postcss 下的 autoprefixer 自动补全 css 前缀插件，因为有了这个插件，所以我们可以自动的去适应大部分的浏览器。下面的这个设置项的意思是「使用量大于1%，浏览器的最后两个版本，不小于ie8」，所以最后打包出来的项目会自动补全 css 前缀到适应这个范围内。
+当然这个插件并不是万无一失的，还是会有一些版本的浏览器的某些 css，是无法补全前缀来实现功能的，在开发中要多加注意像 ie 这种异类，然后在一些手机端项目上，主流浏览器上，都可以放心的去开发。
+你可以在这里面加上我们常用的配置，例如："iOS >= 8",, "Android > 4.4", "Firefox >= 20" 等，我们在开发中需要特别针对的浏览器版本，查看[Browserslist](https://github.com/browserslist/browserslist#best-practices)了解更多配置列表。
+
+```json
+"browserslist": [
+  "> 1%",
+  "last 2 versions",
+  "not ie <= 8"
+]
+```
+
+# 服务端渲染
+关于「服务端渲染」如果你不是很了解的，可以 google 了解一下。如果你不需要用这个功能，可以完全忽略下面的内容，只看看上面的，直接拿来用就行了。一句话判断是否需要 "这个项目需要 SEO 吗？需要首屏加载速度快吗？"，如果都不需要，就老老实实的用「客户端渲染」就好了。
+「服务端渲染」是我在上面的脚手架完成后才加入的，所以在结构上来说，「服务端渲染」完全依赖「客户端渲染」的配置，把「服务端渲染」相关的内容全部删掉，也不会影响到脚手架的基本功能。
+
+### 写法差异
+因为在服务端运行代码的时候，react 的生命周期只进行到 componentWillMount，之后的从 componentDidMount 开始在浏览器开始运行，因为「服务端渲染」是需要在页面请求的时候把完整的页面传回去，包括你向后端请求的数据，所以我们需要在服务端把数据请求好，和页面一起传回去。
+所以因为这一点，造成了我们在页面加载时请求的数据，需要用其他方法来处理，我们需要在服务端运行的时候捕获需要完成的任务，在这里我们定义了一个 'asyncData' 的异步方法（在任务完成后进行下一步的操作），这样的就可以在服务端接收到请求时，主动去把当前请求页面的 'asyncData' 方法捕获出来并完成这个任务，然后再统一返回数据。
+同时我们需要一个状态管理工具，这里我用的是 'Mobx'，
+```javascript
+// /src/pages/a
+@inject('a') @observer
+class A extends Component {
+    @action static asyncData = store => Promise.all([
+        store.a.plus()
+    ])
+
+    constructor(props) {
+        super(props);
+        this.store = props.a;
+    }
+
+    componentDidMount() {
+        if (!this.store.num) {
+            A.asyncData(this.props);
+        }
+    }
+
+    render() {
+        const { num, minus, plus } = this.store;
+
+        return (
+            <div>
+                <div>{num}</div>
+                <button type="button" onClick={minus}>-</button>
+                <button type="button" onClick={plus}>+</button>
+            </div>
+        );
+    }
+}
+```
 
 、
 
