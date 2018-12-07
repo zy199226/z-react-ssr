@@ -247,6 +247,7 @@ plugins: [
 1、optimization（优化）
 
 splitChunks 用来分割模块打包，根据 splitChunks.cacheGroups 下的对象里面的条件进行分割的，具体的分割条件可查看[一步一步的了解webpack4的splitChunk插件](https://juejin.im/post/5af1677c6fb9a07ab508dabb)这篇文章，写得比较详细。
+
 minimizer 在 production 模式下对代码进行压缩，因为某些原因，这里我从新引入两个更高效率的压缩插件。
 
 ```javascript
