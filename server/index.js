@@ -8,7 +8,6 @@ const port = 3000;
 const app = express();
 app.use(compression());
 app.use('/static', express.static(path.join(__dirname, '../dist/static')));
-
 app.get('/favicon.ico', resFavicon);
 
 /**

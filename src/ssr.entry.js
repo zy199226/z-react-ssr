@@ -20,11 +20,11 @@ const mergeObservables = (stores, source) => {
     return stores;
 };
 
+mergeObservables(stores, window.__INITIAL_STATE__);
+
 configure({
     enforceActions: 'observed'
 });
-
-mergeObservables(stores, window.__INITIAL_STATE__);
 
 loadComponents().then(() => {
     render(
