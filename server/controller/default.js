@@ -10,7 +10,7 @@ import newHtml from '../util/resHtml';
 import resState from '../util/resState';
 import resetStores from '../util/resetStore';
 
-useStaticRendering(true);
+useStaticRendering(true); // Mobx 的官方方法，防止多次渲染，避免内存泄漏
 
 const baseState = JSON.stringify(stores);
 
@@ -56,8 +56,8 @@ const defaultRes = async (req, res) => {
         return html;
     } catch (e) {
         console.log(e);
+        return false;
     }
-    return false;
 };
 
 /**
