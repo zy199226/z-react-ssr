@@ -20,7 +20,6 @@
 - assets '公共'资源文件。请注意公共二字我特别打上了重点，其原因是很多开发人员将组件级别的资源文件放置到了公共资源文件进行统一的管理，但是在实践中我并不认为这是一个特别好的选择。与组件强依赖的资源文件我认为和组件一起放置在一个文件夹内，能够更快、更容易的进行管理。只有通用的公共文件才会放在这里来。
 - pages 和 components 文件夹，前者放置的是页面以及页面强依赖的组件，例如注册页面 login，用户管理界面 user 等等。后者则放置的是公共组件。与公共资源文件一样，强依赖的组件就应该和其页面在同一个文件夹中去管理。
 
-
 ```text
 ├── build                       // webpack 配置相关
 │   ├── webpack.base.conf.js    // 基础webpack配置，被其他配置所依赖
@@ -311,6 +310,7 @@ plugins: [
         }
     ),
     new HtmlWebpackPlugin({
+        // favicon: path.join(__dirname, '../src/favicon.ico'),
         filename: path.join(__dirname, '../dist/index.html'),
         template: path.join(__dirname, '../src/index.html'),
         inject: true

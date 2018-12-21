@@ -63,6 +63,7 @@ module.exports = merge(baseWebpackConfig, {
             }
         ),
         new HtmlWebpackPlugin({
+            // favicon: path.join(__dirname, '../src/favicon.ico'),
             filename: path.join(__dirname, '../dist/index.html'),
             template: path.join(__dirname, '../src/index.html'),
             inject: true
