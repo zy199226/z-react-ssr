@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Switch, Link, Route } from 'react-router-dom';
 // import { action } from 'mobx';
 // import { inject, observer } from 'mobx-react';
-import 'normalize.css';
+import 'normalize.css'; // 重置 css
 
 import list2 from '../router/routes2';
 import './app.sass';

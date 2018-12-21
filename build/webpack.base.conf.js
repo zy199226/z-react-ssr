@@ -7,7 +7,7 @@ const chalk = require('chalk');
 
 const devMode = process.env.NODE_ENV === 'production';
 const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
-const staticPath = devMode ? 'static/' : ''; // 静态文件路径，在 dev-server 模式中务必为空，不然会报文件路径错误
+const staticPath = devMode ? 'static/' : ''; // 静态文件路径，在 dev-server 模式中为空，不然会报文件路径错误
 
 module.exports = {
     entry: {
