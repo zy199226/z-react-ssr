@@ -7,7 +7,6 @@ const chalk = require('chalk');
 
 const devMode = process.env.NODE_ENV === 'production';
 const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
-const staticPath = devMode ? 'static/' : ''; // 静态文件路径，在 dev-server 模式中为空，不然会报文件路径错误
 
 module.exports = {
     entry: {
@@ -15,10 +14,10 @@ module.exports = {
     },
 
     output: {
-        path: path.resolve(__dirname, '../dist/', staticPath),
+        path: path.resolve(__dirname, '../dist/', 'static'),
         filename: 'js/[name].[hash:8].js',
         chunkFilename: 'js/[name].[hash:8].js',
-        publicPath: `/${staticPath}` // 这里可设置项目 '绝对路径' 和 '相对路径'
+        publicPath: '/static/' // 这里可设置项目 '绝对路径' 和 '相对路径'
     },
 
     module: {

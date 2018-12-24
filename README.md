@@ -12,7 +12,7 @@
 这个文件下面都是跑在服务端的，因为其中包含 'react' 代码，所以会提前使用 'webpack' 打包后再运行。结构比较简单，可以很方便的拓展来支持更多的服务端需求。
 
 '/src'
-这个下面就全都是前端项目文件。对于项目中的文件放置问题，我认为还是有必要约束一下。在我们的工作中，不可避免的都会接手别人的项目，或者是多人项目，或者是帮别人解决个BUG，都会花比较长的时间来了解项目的基本情况，来找到别人写的关键部分到底在哪。这样一团糟的项目，相信不管是谁都会感到头痛。
+这个下面就全都是前端项目文件。对于项目中的文件放置问题，还是有必要做好分类放置的。在我们的工作中，不可避免的都会接手别人的项目，或者是多人项目，都会花比较长的时间来了解项目或者沟通上。一个管理混乱的项目，不管是谁都不想碰到的。
 
 所以我们需要对整个项目的结构做一定的约束，统一管理起来。
 
@@ -64,26 +64,18 @@
 #### /build/webpack.base.conf.js
 这个是 webpack 的基础配置文件，被其他配置文件所依赖，有下列几个可配置部分：
 
-1、输出静态文件路径
-
-```javascript
-// 静态文件路径，在 dev-server 模式中为空，不然会报文件路径错误
-// 被下面 output 配置所依赖，决定了生产环境下静态文件的路径
-const staticPath = devMode ? 'static/' : '';
-```
-
-2、输出文件路径
+1、输出文件路径
 
 ```javascript
 output: {
-    path: path.resolve(__dirname, '../dist/', staticPath), // 这里设置输出文件路径
+    path: path.resolve(__dirname, '../dist/', 'static'),
     filename: 'js/[name].[hash:8].js',
     chunkFilename: 'js/[name].[hash:8].js',
-    publicPath: `/${staticPath}` // 这里可设置项目 '绝对路径' 和 '相对路径'
+    publicPath: '/static/' // 这里可设置项目 '绝对路径' 和 '相对路径'
 },
 ```
 
-3、loader 相关
+2、loader 相关
 
 这里放置的都是loader相关的配置，使用了 'sass'、'postcss' 等，如需其他配置，请自行添加，可参考[loader](https://webpack.docschina.org/concepts/loaders/#%E7%A4%BA%E4%BE%8B)。
 
@@ -139,7 +131,7 @@ module: {
 },
 ```
 
-4、resolve
+3、resolve
 
 这些选项能设置模块如何被解析，自行设置请参考[模块解析](https://webpack.docschina.org/configuration/resolve/#src/components/Sidebar/Sidebar.jsx)。
 
@@ -152,7 +144,7 @@ resolve: {
 },
 ```
 
-5、统计信息
+4、统计信息
 
 因为打包后的输出统计信息太多了，所以我把一些信息给关掉了，自行设置请参考[统计信息](https://webpack.docschina.org/configuration/stats/#stats)。
 
@@ -164,7 +156,7 @@ stats: {
 },
 ```
 
-6、插件
+5、插件
 
 提取 css 等样式文件：[MiniCssExtractPlugin](https://webpack.js.org/plugins/mini-css-extract-plugin/)
 
@@ -211,23 +203,23 @@ devServer: {
     clientLogLevel: 'warning', // 使用内联模式时，会在开发工具(DevTools)的控制台(console)显示消息
     quiet: true, // 除了初始启动信息之外的任何内容都不会被打印到控制台
     historyApiFallback: true,
-    proxy: { // 本地代理
-        '/api': {
-            target: 'http://10.100.4.63:3000',
-            // pathRewrite: { '^/api': '' },
-            changeOrigin: true
-        }
-    }
+    // proxy: { // 本地代理
+    //     '/api': {
+    //         target: 'http://10.100.4.63:3000',
+    //         // pathRewrite: { '^/api': '' },
+    //         changeOrigin: true
+    //     }
+    // }
 },
 ```
 
 2、插件
 
-webpack内置的热替换模块，无需设置，可作了解：[HotModuleReplacementPlugin](https://webpack.docschina.org/plugins/hot-module-replacement-plugin/#src/components/Sidebar/Sidebar.jsx)
+webpack 内置的热替换模块，无需设置，可作了解：[HotModuleReplacementPlugin](https://webpack.docschina.org/plugins/hot-module-replacement-plugin/#src/components/Sidebar/Sidebar.jsx)
 
-启用HotModuleReplacementPlugin时，此插件将显示模块的相对路径。无需设置，建议用于开发：[NamedModulesPlugin](https://webpack.docschina.org/plugins/named-modules-plugin/#src/components/Sidebar/Sidebar.jsx)
+启用 HotModuleReplacementPlugin 时，此插件将显示模块的相对路径。无需设置，建议用于开发：[NamedModulesPlugin](https://webpack.docschina.org/plugins/named-modules-plugin/#src/components/Sidebar/Sidebar.jsx)
 
-生成html用的：[HtmlWebpackPlugin](https://github.com/jantimon/html-webpack-plugin#options)
+生成 html 用的：[HtmlWebpackPlugin](https://github.com/jantimon/html-webpack-plugin#options)
 
 ```javascript
 plugins: [
@@ -319,7 +311,7 @@ plugins: [
 ```
 
 #### /package.json
-这个文件里面有一个对象是可以设置的，针对的是 postcss 下的 autoprefixer 自动补全 css 前缀插件，因为有了这个插件，所以我们可以自动的去适应大部分的浏览器。下面的这个设置项的意思是「使用量大于1%，浏览器的最后两个版本，不小于ie8」，所以最后打包出来的项目会自动补全 css 前缀到适应这个范围内。
+这个文件里面有一个对象是可以设置的，针对的是 autoprefixer 自动补全插件、babel 转码器等需要判断兼容版本的工具，所以我们可以自动的去适应大部分的浏览器。下面的这个设置项的意思是「使用量大于1%，浏览器的最后两个版本，不小于ie8」，所以最后打包出来的项目会自动补全 css 前缀到适应这个范围内。
 
 当然这个插件并不是万无一失的，还是会有一些版本的浏览器的某些 css，是无法补全前缀来实现功能的，在开发中要多加注意像 ie 这种异类，然后在一些手机端项目上，主流浏览器上，都可以放心的去开发。
 
@@ -343,7 +335,9 @@ plugins: [
 ### 写法差异&数据处理
 「服务端渲染」最直观的理解就是把完整的静态页面返回给客户端，包括页面的数据。
 
-在服务端运行代码的时候，react 的生命周期只进行到 componentWillMount，之后的从 componentDidMount 开始在浏览器开始执行，因为「服务端渲染」是需要在页面请求的时候把完整的页面传回去，包括你向后端请求的数据，所以我们需要在服务端把数据请求好，和页面一起传回去。
+在服务端运行代码的时候，react 的生命周期只进行到 componentWillMount，之后的从 componentDidMount 开始在浏览器开始执行。
+
+因为「服务端渲染」是需要在页面请求的时候把完整的页面传回去，包括你向后端请求的数据，所以我们需要在服务端把数据请求好，和页面一起传回去。
 
 所以因为这一点，造成了我们在页面加载时请求的数据，需要用其他方法来处理，我们需要在服务端运行的时候捕获需要完成的任务，在这里我们定义了一个 'asyncData' 的异步方法，这样的就可以在服务端接收到请求时，主动去把当前请求页面的 'asyncData' 方法捕获出来并完成这个任务，然后再统一返回数据。
 
