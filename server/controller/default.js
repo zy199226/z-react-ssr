@@ -18,8 +18,8 @@ const baseState = JSON.stringify(stores);
  * 设置缓存工作方法的相关属性
  */
 const microCache = LRU({
-    max: 2,
-    maxAge: 1000
+    max: 100, // 缓存数量
+    maxAge: 1000 // 缓存时间（毫秒）
 });
 
 /**
