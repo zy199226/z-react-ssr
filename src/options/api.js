@@ -5,7 +5,7 @@ export const TEST1 = {
     /**
      * 带图内容
      */
-    CONTENT: '/content'
+    CONTENT: '/api/content'
 };
 
 /**
@@ -15,5 +15,5 @@ export const TEST2 = {
     /**
      * 带图内容
      */
-    CONTENT: '/content'
+    CONTENT: '/api/content'
 };

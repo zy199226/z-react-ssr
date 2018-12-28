@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const service = axios.create({
-    baseURL: '/api',
+    baseURL: 'http://localhost:3000/', // 开启服务端时，记得写好接口地址
+    // baseURL: '/',
     timeout: 10000
 });
 
