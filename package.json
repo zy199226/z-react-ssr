@@ -9,7 +9,7 @@
     "start": "npm run dev",
     "ssr-client": "NODE_ENV=production webpack --config build/webpack.client.conf.js",
     "ssr-server": "webpack --mode production --config build/webpack.server.conf.js ",
-    "ssr-start": "node --inspect ./dist/server/server.js",
+    "ssr-start": "node ./dist/server/server.js",
     "ssr": "npm run ssr-client && npm run ssr-server && npm run ssr-start",
     "inspect": "node --inspect ./dist/server/server.js"
   },
