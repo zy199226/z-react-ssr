@@ -413,18 +413,6 @@ class A extends Component {
 
 
 ```javascript
-import React from 'react';
-import { renderToString } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom';
-import { getLoadableState } from 'loadable-components/server';
-import { Provider, useStaticRendering } from 'mobx-react';
-import LRU from 'lru-cache';
-import stores from '../../src/store';
-import { Routes } from '../../src/router';
-import newHtml from '../util/resHtml';
-import resState from '../util/resState';
-import resetStores from '../util/resetStore';
-
 useStaticRendering(true); // Mobx 的官方方法，防止多次渲染，避免内存泄漏
 
 const baseState = JSON.stringify(stores);
@@ -498,8 +486,6 @@ const getCache = (req, res) => {
         console.log(`--> ${req.url}  ${Date.now() - start}ms`);
     });
 };
-
-export default getCache;
 ```
 
 ## PS
